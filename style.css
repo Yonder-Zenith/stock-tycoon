@@ -641,3 +641,11 @@ input { font-family: inherit; }
   .mb-buy { background: linear-gradient(180deg, #ff5c5c, #e03a3a); }
   .mb-sell { background: linear-gradient(180deg, #17d1a0, #0fa87f); }
 }
+
+.foot-actions { display: flex; gap: 14px; align-items: center; }
+.foot-actions .link-btn { white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .foot-actions { gap: 16px; flex-wrap: wrap; }
+  .foot-actions .link-btn { font-size: 12px; padding: 4px 0; }
+}

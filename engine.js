@@ -877,6 +877,33 @@
       return { ok: true, watchlist };
     }
 
+    if (route === "/api/export") {
+      return {
+        app: "stock-tycoon",
+        version: 1,
+        exportedAt: nowISO(),
+        state,
+        watchlist,
+      };
+    }
+
+    if (route === "/api/import") {
+      const st = body.state || body;
+      if (!st || typeof st !== "object" || typeof st.cash !== "number" || !st.positions) {
+        return { ok: false, message: "这不是有效的存档文件" };
+      }
+      state = normalize(st);
+      saveState();
+      const wl = Array.isArray(body.watchlist)
+        ? body.watchlist.filter((c) => typeof c === "string" && c.length >= 8).slice(0, 40)
+        : [];
+      if (wl.length) {
+        watchlist = wl;
+        saveWatch();
+      }
+      return { ok: true, message: "存档已导入" };
+    }
+
     if (route === "/api/reset") {
       state = newState();
       saveState();

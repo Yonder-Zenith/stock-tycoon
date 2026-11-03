@@ -709,6 +709,68 @@
       });
     });
 
+    $("#exportBtn").addEventListener("click", async () => {
+      try {
+        const data = await api("/api/export");
+        const stamp = new Date().toISOString().slice(0, 10);
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `A股大亨-存档-${stamp}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        toast("存档已导出", "文件已保存，换手机时用「导入存档」恢复", "ok", 4200);
+      } catch (e) {
+        toast("导出失败", String((e && e.message) || e), "err");
+      }
+    });
+
+    $("#importBtn").addEventListener("click", () => $("#importFile").click());
+
+    $("#importFile").addEventListener("change", async (ev) => {
+      const file = ev.target.files && ev.target.files[0];
+      ev.target.value = "";
+      if (!file) return;
+      let data;
+      try {
+        data = JSON.parse(await file.text());
+      } catch (e) {
+        return toast("导入失败", "文件不是有效的 JSON", "err");
+      }
+      const st = data.state || data;
+      if (!st || typeof st !== "object" || typeof st.cash !== "number") {
+        return toast("导入失败", "这不像 A股大亨 的存档文件", "err");
+      }
+      const when = st.createdAt || "未知时间";
+      const cash = Number(st.cash) || 0;
+      modal({
+        icon: "📥",
+        title: "导入存档？",
+        html: `存档建立于 <b>${esc(when)}</b><br/>现金 <b>¥${fmt(cash)}</b><br/><br/>
+               导入会<b>覆盖当前进度</b>（持仓、成交、成就都会被替换）。`,
+        okText: "覆盖并导入",
+        onOk: async () => {
+          try {
+            const res = await api("/api/import", {
+              method: "POST",
+              body: JSON.stringify({ state: st, watchlist: data.watchlist || [] }),
+            });
+            if (!res || res.ok === false) throw new Error((res && res.message) || "导入失败");
+            APP.knownAchievements.clear();
+            APP.firstRender = false;
+            await loadState();
+            await loadMinute(true);
+            toast("导入成功", "已恢复到存档进度", "ok");
+          } catch (e) {
+            toast("导入失败", String((e && e.message) || e), "err");
+          }
+        },
+      });
+    });
+
     $("#resetBtn").addEventListener("click", () => {
       modal({
         icon: "🔄",

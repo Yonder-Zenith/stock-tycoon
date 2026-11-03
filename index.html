@@ -161,8 +161,13 @@
 
   <footer class="foot">
     <span>行情来自腾讯证券（页面 5 秒刷新），仅供娱乐学习，不构成投资建议。</span>
-    <button id="resetBtn" class="link-btn">重开一局</button>
+    <div class="foot-actions">
+      <button id="exportBtn" class="link-btn">导出存档</button>
+      <button id="importBtn" class="link-btn">导入存档</button>
+      <button id="resetBtn" class="link-btn">重开一局</button>
+    </div>
   </footer>
+  <input type="file" id="importFile" accept=".json,application/json" hidden />
 </div>
 
 <div class="mobile-bar" id="mobileBar">
