@@ -1,0 +1,16 @@
+{
+  "name": "A股大亨 · 真实行情虚拟炒股",
+  "short_name": "A股大亨",
+  "description": "用真实 A 股行情和 100 万虚拟资金炒股",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070a11",
+  "theme_color": "#070a11",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
